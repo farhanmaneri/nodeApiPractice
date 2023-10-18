@@ -30,8 +30,28 @@ const Products = require('../models/product')
      res.status(500).send({ error: error.toString() });
    }
  };
+let editProduct = async (req, res)=>{
+ try{ const id = req.params.id
+  if(! mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send({message:"Invalid Product ID"});
+  }
  
- 
+  const result = await Products.updateOne({_id: id},{
+    $set:{
+      title: 'farhan khan maneri',
+    }
+  });
+  if (result.matchedCount == 0) {
+    return res.status(404).send({ message: "No product exist against this id" });
+  }  
+  res.status(200).send({result, message:'updated successfully'})
+
+  
+}catch (error) {
+  res.status(500).send({ error: error.toString() });
+}
+
+}
  
  let deleteProduct= async (req, res) => {
    try {
@@ -45,7 +65,7 @@ const Products = require('../models/product')
      const deletedProduct = await Products.findOne({_id:id})
      // console.log(deleteProduct)
      const product = await Products.deleteOne({_id:id});
-     console.log(product);
+    //  console.log(product);
      if (product.deletedCount == 0) {
        return res.status(404).send({ message: "No product exist against this id" });
      }     
@@ -71,4 +91,4 @@ const Products = require('../models/product')
    }
  };
  
-module.exports= {getProduct,getProducts,deleteProduct,createProduct};
+module.exports= {getProduct,getProducts,deleteProduct,createProduct, editProduct};
